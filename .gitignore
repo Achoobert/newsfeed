@@ -35,6 +35,11 @@ go.work.sum
 links.json
 links.json.backup
 
+# Generated files (should not be tracked)
+src/index.html
+src/sitemap.xml
+src/robots.txt
+
 # Security and sensitive files
 *.key
 *.pem
@@ -44,4 +49,3 @@ links.json.backup
 secrets/
 config.local.*
 *.log
-./src/*
