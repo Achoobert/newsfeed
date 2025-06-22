@@ -1,0 +1,10 @@
+services:
+  static-server:
+    image: busybox # is this the smallest possible image?
+    command: sh -c "while true; do httpd -f -p 8071 -h /usr/share/static; sleep 1; done"
+    ports:
+      - "8071:8071"
+    restart: unless-stopped
+    # TODO add a bind-mount that detects file changes
+    volumes:
+      - ./src:/usr/share/static
