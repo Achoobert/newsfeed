@@ -26,20 +26,22 @@ echo "URL validated successfully!"
 read -p "enter description: " DESCRIPTION
 
 # Call Go program to fetch metadata (title, thumbnail, og data)
-META_JSON=$(go run fetchmeta.go "$URL")
+# Use absolute path to fetchmeta.go
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+META_JSON=$(cd "$SCRIPT_DIR" && go run fetchmeta.go "$URL")
 
 # Compose new entry JSON
 DATE=$(date '+%B %d, %Y at %I:%M %p')
 NEW_ENTRY=$(echo "$META_JSON" | jq --arg url "$URL" --arg desc "$DESCRIPTION" --arg date "$DATE" '. + {"url":$url, "description":$desc, "date":$date}')
 
 # Ensure links.json exists
-[ -f links.json ] || echo '[]' > links.json
+[ -f "$SCRIPT_DIR/links.json" ] || echo '[]' > "$SCRIPT_DIR/links.json"
 
 # Prepend new entry to links.json
 TMP=$(mktemp)
-jq --argjson new "$NEW_ENTRY" '. |= [ $new ] + .' links.json > "$TMP" && mv "$TMP" links.json
+jq --argjson new "$NEW_ENTRY" '. |= [ $new ] + .' "$SCRIPT_DIR/links.json" > "$TMP" && mv "$TMP" "$SCRIPT_DIR/links.json"
 
 # Regenerate index.html
-./render.gohtml.sh
+cd "$SCRIPT_DIR" && ./render.gohtml.sh
 
 echo "done!" 

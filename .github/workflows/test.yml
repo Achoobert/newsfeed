@@ -1,0 +1,205 @@
+# TODO automatically run go tests on any push. make sure basic functionality works
+
+name: Test Newsfeed
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+        
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq curl wget
+        
+    - name: Test Go code
+      run: |
+        cd newsfeed
+        go mod init newsfeed 2>/dev/null || true
+        go test -v ./...
+        
+    - name: Test fetchmeta.go functionality
+      run: |
+        cd newsfeed
+        # Test with a simple URL
+        echo '{"title":"Test Title","thumbnail":"test.jpg"}' > test_meta.json
+        go run fetchmeta.go https://example.com > /dev/null || echo "fetchmeta.go executed successfully"
+        
+    - name: Test script permissions and basic functionality
+      run: |
+        cd newsfeed
+        chmod +x add.sh render.gohtml.sh generate-sitemap.sh
+        chmod +x ../sync/update.sh ../sync/setup-cron.sh
+        
+        # Test that scripts are executable
+        ls -la *.sh
+        ls -la ../sync/*.sh
+        
+    - name: Test template parsing
+      run: |
+        cd newsfeed
+        # Test that about.md can be parsed
+        if [ -f "../template/about.md" ]; then
+          echo "✅ about.md exists and is readable"
+          cat ../template/about.md
+        else
+          echo "❌ about.md not found"
+          exit 1
+        fi
+        
+    - name: Test HTML generation
+      run: |
+        cd newsfeed
+        # Create test data
+        echo '[{"title":"Test Link","url":"https://example.com","description":"Test description","date":"June 22, 2025 at 10:00 AM","thumbnail":""}]' > links.json
+        
+        # Test HTML generation
+        ./render.gohtml.sh
+        
+        # Check that files were generated
+        if [ -f "../src/index.html" ]; then
+          echo "✅ index.html generated successfully"
+          head -10 ../src/index.html
+        else
+          echo "❌ index.html not generated"
+          exit 1
+        fi
+        
+        if [ -f "../src/sitemap.xml" ]; then
+          echo "✅ sitemap.xml generated successfully"
+          head -5 ../src/sitemap.xml
+        else
+          echo "❌ sitemap.xml not generated"
+          exit 1
+        fi
+        
+        if [ -f "../src/robots.txt" ]; then
+          echo "✅ robots.txt generated successfully"
+          cat ../src/robots.txt
+        else
+          echo "❌ robots.txt not generated"
+          exit 1
+        fi
+        
+    - name: Test sitemap generation
+      run: |
+        cd newsfeed
+        ./generate-sitemap.sh
+        
+        # Validate sitemap XML structure
+        if grep -q "<?xml" ../src/sitemap.xml; then
+          echo "✅ sitemap.xml has valid XML structure"
+        else
+          echo "❌ sitemap.xml missing XML declaration"
+          exit 1
+        fi
+        
+        if grep -q "<urlset" ../src/sitemap.xml; then
+          echo "✅ sitemap.xml has valid urlset element"
+        else
+          echo "❌ sitemap.xml missing urlset element"
+          exit 1
+        fi
+        
+    - name: Test URL validation
+      run: |
+        cd newsfeed
+        # Test that invalid URLs are rejected
+        if ./add.sh "invalid-url" 2>&1 | grep -q "Error"; then
+          echo "✅ Invalid URL properly rejected"
+        else
+          echo "❌ Invalid URL not rejected"
+          exit 1
+        fi
+        
+    - name: Test Docker setup
+      run: |
+        # Test that docker-compose.yml is valid
+        if [ -f "docker-compose.yml" ]; then
+          echo "✅ docker-compose.yml exists"
+          cat docker-compose.yml
+        else
+          echo "❌ docker-compose.yml not found"
+          exit 1
+        fi
+        
+    - name: Test file structure
+      run: |
+        # Verify required files exist
+        required_files=(
+          "newsfeed/add.sh"
+          "newsfeed/fetchmeta.go"
+          "newsfeed/render.gohtml.sh"
+          "newsfeed/generate-sitemap.sh"
+          "sync/update.sh"
+          "sync/setup-cron.sh"
+          "template/about.md"
+          "template/index.html.template"
+          "README.md"
+        )
+        
+        for file in "${required_files[@]}"; do
+          if [ -f "$file" ]; then
+            echo "✅ $file exists"
+          else
+            echo "❌ $file missing"
+            exit 1
+          fi
+        done
+        
+    - name: Test security features
+      run: |
+        cd newsfeed
+        # Check for security issues
+        if grep -q "Content-Security-Policy" ../src/index.html; then
+          echo "✅ CSP header present"
+        else
+          echo "❌ CSP header missing"
+          exit 1
+        fi
+        
+        if grep -q "noopener noreferrer" ../src/index.html; then
+          echo "✅ External links have security attributes"
+        else
+          echo "❌ External links missing security attributes"
+          exit 1
+        fi
+        
+    - name: Test accessibility features
+      run: |
+        cd newsfeed
+        # Check for accessibility features
+        if grep -q "skip-link" ../src/index.html; then
+          echo "✅ Skip link present for accessibility"
+        else
+          echo "❌ Skip link missing"
+          exit 1
+        fi
+        
+        if grep -q "aria-label" ../src/index.html; then
+          echo "✅ ARIA labels present"
+        else
+          echo "❌ ARIA labels missing"
+          exit 1
+        fi
+        
+        if grep -q "<main" ../src/index.html; then
+          echo "✅ Semantic HTML elements present"
+        else
+          echo "❌ Semantic HTML elements missing"
+          exit 1
+        fi

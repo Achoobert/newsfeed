@@ -18,8 +18,26 @@ type Meta struct {
 }
 
 func isValidURL(urlStr string) bool {
-	_, err := url.Parse(urlStr)
-	return err == nil
+	if urlStr == "" {
+		return false
+	}
+	
+	parsed, err := url.Parse(urlStr)
+	if err != nil {
+		return false
+	}
+	
+	// Require a scheme (http/https)
+	if parsed.Scheme == "" {
+		return false
+	}
+	
+	// Require a host
+	if parsed.Host == "" {
+		return false
+	}
+	
+	return true
 }
 
 func fetchOpenGraph(url string) (*Meta, error) {

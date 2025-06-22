@@ -32,11 +32,13 @@ docker compose up -d
 ## Setup
 ```bash
 # Make scripts executable
-chmod +x add.sh render.gohtml.sh generate-sitemap.sh
+chmod +x add.sh ./newsfeed/render.gohtml.sh ./newsfeed/generate-sitemap.sh
 chmod +x sync/update.sh sync/setup-cron.sh
 
 # Start server
 docker compose up -d
+or
+docker-compose up -d
 
 # Optional: Set up automatic updates
 ./sync/setup-cron.sh
