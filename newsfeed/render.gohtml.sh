@@ -48,15 +48,46 @@ jq -c '.[]' links.json | while read -r entry; do
   DESC=$(echo "$entry" | jq -r '.description')
   DATE=$(echo "$entry" | jq -r '.date')
   THUMB=$(echo "$entry" | jq -r '.thumbnail // empty')
+  SITE_NAME=$(echo "$entry" | jq -r '.site_name // empty')
+  FAVICON=$(echo "$entry" | jq -r '.favicon // empty')
+  META_DESC=$(echo "$entry" | jq -r '.description // empty')
+  
+  # Use metadata description if available, otherwise use user description
+  DISPLAY_DESC="$DESC"
+  if [ -n "$META_DESC" ] && [ "$META_DESC" != "null" ]; then
+    DISPLAY_DESC="$META_DESC"
+  fi
   
   ENTRY_HTML="      <article class=\"entry\">"
+  
+  # Add thumbnail if available
   if [ -n "$THUMB" ] && [ "$THUMB" != "null" ]; then
     ENTRY_HTML="$ENTRY_HTML
         <a href=\"$URL\" target=\"_blank\" rel=\"noopener noreferrer\"><img class=\"thumb\" src=\"$THUMB\" alt=\"Thumbnail for $(echo "$TITLE" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')\"></a>"
   fi
+  
+  # Add favicon and site name if available
+  if [ -n "$FAVICON" ] && [ "$FAVICON" != "null" ]; then
+    ENTRY_HTML="$ENTRY_HTML
+        <div class=\"site-info\">
+          <img class=\"favicon\" src=\"$FAVICON\" alt=\"\" width=\"16\" height=\"16\">"
+    if [ -n "$SITE_NAME" ] && [ "$SITE_NAME" != "null" ]; then
+      ENTRY_HTML="$ENTRY_HTML <span class=\"site-name\">$SITE_NAME</span>"
+    fi
+    ENTRY_HTML="$ENTRY_HTML
+        </div>"
+  fi
+  
   ENTRY_HTML="$ENTRY_HTML
-        <h2><a href=\"$URL\" target=\"_blank\" rel=\"noopener noreferrer\">$(echo "$TITLE" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')</a></h2>
-        <p class=\"desc\">$(echo "$DESC" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')</p>
+        <h2><a href=\"$URL\" target=\"_blank\" rel=\"noopener noreferrer\">$(echo "$TITLE" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')</a></h2>"
+  
+  # Add description if available
+  if [ -n "$DISPLAY_DESC" ] && [ "$DISPLAY_DESC" != "null" ]; then
+    ENTRY_HTML="$ENTRY_HTML
+        <p class=\"desc\">$(echo "$DISPLAY_DESC" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g')</p>"
+  fi
+  
+  ENTRY_HTML="$ENTRY_HTML
         <time class=\"date\" datetime=\"$(echo "$DATE" | sed 's/, 2025 at /T/' | sed 's/ AM/ UTC/' | sed 's/ PM/ UTC/')\">$DATE</time>
       </article>"
   

@@ -13,8 +13,12 @@ import (
 )
 
 type Meta struct {
-	Title     string `json:"title"`
-	Thumbnail string `json:"thumbnail"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Thumbnail   string `json:"thumbnail"`
+	SiteName    string `json:"site_name"`
+	Favicon     string `json:"favicon"`
+	URL         string `json:"url"`
 }
 
 func isValidURL(urlStr string) bool {
@@ -40,8 +44,8 @@ func isValidURL(urlStr string) bool {
 	return true
 }
 
-func fetchOpenGraph(url string) (*Meta, error) {
-	resp, err := http.Get(url)
+func fetchOpenGraph(urlStr string) (*Meta, error) {
+	resp, err := http.Get(urlStr)
 	if err != nil {
 		return nil, err
 	}
@@ -49,22 +53,61 @@ func fetchOpenGraph(url string) (*Meta, error) {
 	body, _ := ioutil.ReadAll(resp.Body)
 	html := string(body)
 
-	meta := &Meta{}
+	meta := &Meta{URL: urlStr}
 
+	// Regular expressions for different metadata types
 	titleRe := regexp.MustCompile(`<title>(.*?)</title>`)
 	ogTitleRe := regexp.MustCompile(`property=["']og:title["'] content=["'](.*?)["']`)
+	ogDescRe := regexp.MustCompile(`property=["']og:description["'] content=["'](.*?)["']`)
 	ogImageRe := regexp.MustCompile(`property=["']og:image["'] content=["'](.*?)["']`)
+	ogSiteNameRe := regexp.MustCompile(`property=["']og:site_name["'] content=["'](.*?)["']`)
+	
+	// Favicon patterns
+	faviconRe := regexp.MustCompile(`<link[^>]*rel=["'](?:shortcut )?icon["'][^>]*href=["']([^"']+)["']`)
+	appleTouchIconRe := regexp.MustCompile(`<link[^>]*rel=["']apple-touch-icon["'][^>]*href=["']([^"']+)["']`)
 
+	// Extract title (OpenGraph first, then regular title)
 	if m := ogTitleRe.FindStringSubmatch(html); len(m) > 1 {
 		meta.Title = m[1]
 	} else if m := titleRe.FindStringSubmatch(html); len(m) > 1 {
 		meta.Title = m[1]
 	}
+
+	// Extract description
+	if m := ogDescRe.FindStringSubmatch(html); len(m) > 1 {
+		meta.Description = m[1]
+	}
+
+	// Extract thumbnail/image
 	if m := ogImageRe.FindStringSubmatch(html); len(m) > 1 {
 		meta.Thumbnail = m[1]
 	}
 
+	// Extract site name
+	if m := ogSiteNameRe.FindStringSubmatch(html); len(m) > 1 {
+		meta.SiteName = m[1]
+	}
+
+	// Extract favicon (try multiple patterns)
+	if m := faviconRe.FindStringSubmatch(html); len(m) > 1 {
+		meta.Favicon = m[1]
+	} else if m := appleTouchIconRe.FindStringSubmatch(html); len(m) > 1 {
+		meta.Favicon = m[1]
+	}
+
+	// If no favicon found, try common favicon locations
+	if meta.Favicon == "" {
+		parsedURL, _ := url.Parse(urlStr)
+		baseURL := fmt.Sprintf("%s://%s", parsedURL.Scheme, parsedURL.Host)
+		meta.Favicon = baseURL + "/favicon.ico"
+	}
+
 	return meta, nil
+}
+
+func isYTDLPInstalled() bool {
+	_, err := exec.LookPath("yt-dlp")
+	return err == nil
 }
 
 func fetchYTDLP(url string) (*Meta, error) {
@@ -76,16 +119,33 @@ func fetchYTDLP(url string) (*Meta, error) {
 		return nil, fmt.Errorf("URL is not a YouTube URL")
 	}
 	
-	cmd := exec.Command("yt-dlp", "--print", "%(title)s\n%(thumbnail)s", url)
+	if !isYTDLPInstalled() {
+		return nil, fmt.Errorf("yt-dlp not installed")
+	}
+	
+	cmd := exec.Command("yt-dlp", "--print", "%(title)s\n%(thumbnail)s\n%(description)s", url)
 	out, err := cmd.Output()
 	if err != nil {
 		return nil, err
 	}
-	lines := strings.SplitN(string(out), "\n", 3)
-	if len(lines) < 2 {
+	lines := strings.SplitN(string(out), "\n", 4)
+	if len(lines) < 3 {
 		return nil, fmt.Errorf("yt-dlp output incomplete")
 	}
-	return &Meta{Title: lines[0], Thumbnail: lines[1]}, nil
+	
+	// Clean up description (remove newlines, truncate if too long)
+	description := strings.ReplaceAll(lines[2], "\n", " ")
+	if len(description) > 200 {
+		description = description[:200] + "..."
+	}
+	
+	return &Meta{
+		Title:       lines[0],
+		Thumbnail:   lines[1],
+		Description: description,
+		SiteName:    "YouTube",
+		URL:         url,
+	}, nil
 }
 
 func main() {
@@ -101,13 +161,30 @@ func main() {
 	}
 	
 	meta, err := fetchOpenGraph(url)
-	if err != nil || meta.Title == "" {
-		if strings.Contains(url, "youtube.com") || strings.Contains(url, "youtu.be") {
-			meta, err = fetchYTDLP(url)
+	if err != nil {
+		meta = &Meta{URL: url}
+	}
+	
+	// Try YouTube fallback if OpenGraph didn't get rich metadata and URL is YouTube
+	if (meta.Thumbnail == "" || meta.Title == "" || meta.Description == "") && (strings.Contains(url, "youtube.com") || strings.Contains(url, "youtu.be")) {
+		if ytMeta, err := fetchYTDLP(url); err == nil {
+			if meta.Title == "" {
+				meta.Title = ytMeta.Title
+			}
+			if meta.Thumbnail == "" {
+				meta.Thumbnail = ytMeta.Thumbnail
+			}
+			if meta.Description == "" {
+				meta.Description = ytMeta.Description
+			}
+			if meta.SiteName == "" {
+				meta.SiteName = ytMeta.SiteName
+			}
+		} else {
+			// Log yt-dlp error but don't fail
+			fmt.Fprintf(os.Stderr, "Warning: yt-dlp failed for %s: %v\n", url, err)
 		}
 	}
-	if meta == nil {
-		meta = &Meta{}
-	}
+	
 	json.NewEncoder(os.Stdout).Encode(meta)
 } 

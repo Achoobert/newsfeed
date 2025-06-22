@@ -113,9 +113,31 @@
       border-radius: 4px;
     }
     
+    /* Site info (favicon + site name) */
+    .site-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      margin-bottom: 0.5em;
+      font-size: 0.9em;
+      color: #666;
+    }
+    
+    .favicon {
+      width: 16px;
+      height: 16px;
+      border-radius: 2px;
+    }
+    
+    .site-name {
+      font-weight: 500;
+      color: #333;
+    }
+    
     .desc { 
       color: #444; 
       margin: 0.5em 0; 
+      line-height: 1.5;
     }
     
     .date { 

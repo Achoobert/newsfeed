@@ -113,9 +113,31 @@
       border-radius: 4px;
     }
     
+    /* Site info (favicon + site name) */
+    .site-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      margin-bottom: 0.5em;
+      font-size: 0.9em;
+      color: #666;
+    }
+    
+    .favicon {
+      width: 16px;
+      height: 16px;
+      border-radius: 2px;
+    }
+    
+    .site-name {
+      font-weight: 500;
+      color: #333;
+    }
+    
     .desc { 
       color: #444; 
       margin: 0.5em 0; 
+      line-height: 1.5;
     }
     
     .date { 
@@ -242,6 +264,15 @@
     <h1>Links</h1>
     
     <section aria-label="Link entries">
+      <article class="entry">
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer"><img class="thumb" src="https://github.githubassets.com/assets/home24-5939032587c9.jpg" alt="Thumbnail for GitHub · Build and ship software on a single, collaborative platform"></a>
+        <div class="site-info">
+          <img class="favicon" src="https://github.githubassets.com/favicons/favicon" alt="" width="16" height="16"> <span class="site-name">GitHub</span>
+        </div>
+        <h2><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub · Build and ship software on a single, collaborative platform</a></h2>
+        <p class="desc">Testing rich metadata</p>
+        <time class="date" datetime="June 22T11:14 UTC">June 22, 2025 at 11:14 AM</time>
+      </article>
       <article class="entry">
         <a href="https://www.youtube.com/shorts/0bxZc__l6NI" target="_blank" rel="noopener noreferrer"><img class="thumb" src="https://i.ytimg.com/vi/0bxZc__l6NI/oar2.jpg?sqp=-oaymwEkCJUDENAFSFqQAgHyq4qpAxMIARUAAAAAJQAAyEI9AICiQ3gB&amp;rs=AOn4CLB8LO17vycdzpKJUx9NbgIAm-yaBg" alt="Thumbnail for Make A List"></a>
         <h2><a href="https://www.youtube.com/shorts/0bxZc__l6NI" target="_blank" rel="noopener noreferrer">Make A List</a></h2>

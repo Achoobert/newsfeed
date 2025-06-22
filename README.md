@@ -10,6 +10,9 @@ sudo yum install jq  # Amazon Linux/RHEL/CentOS
 # OR: sudo apt-get install jq  # Ubuntu/Debian
 # OR: brew install jq  # macOS
 
+# Install yt-dlp for YouTube thumbnails (optional but recommended)
+./sync/install-ytdlp.sh
+
 # Add a link
 cd newsfeed
 ./add.sh http://example.com
@@ -25,6 +28,7 @@ docker compose up -d
 - Static HTML generation with about section
 - Docker-based serving
 - Automatic title/thumbnail fetching
+- **YouTube thumbnail support via yt-dlp**
 - Smart URL handling (auto-prepends https://, validates URLs)
 - Automatic updates from remote repository
 - **Automatic sitemap generation**
@@ -34,7 +38,10 @@ docker compose up -d
 ```bash
 # Make scripts executable
 chmod +x add.sh ./newsfeed/render.gohtml.sh ./newsfeed/generate-sitemap.sh
-chmod +x sync/update.sh sync/setup-cron.sh
+chmod +x sync/update.sh sync/setup-cron.sh sync/install-ytdlp.sh
+
+# Install yt-dlp for YouTube thumbnails
+./sync/install-ytdlp.sh
 
 # Start server
 docker compose up -d
@@ -60,6 +67,14 @@ docker-compose up -d
 # Backup your links data
 ./backup-links.sh [backup-name]
 ```
+
+## YouTube Thumbnails
+
+For YouTube videos, the tool automatically fetches thumbnails using `yt-dlp`:
+
+- **Installation**: Run `./sync/install-ytdlp.sh` on your server
+- **Automatic**: Thumbnails are fetched when adding YouTube links
+- **Fallback**: If `yt-dlp` is not available, links work without thumbnails
 
 ## Testing
 ```bash
@@ -87,7 +102,7 @@ ls -la *.backup*
 
 ## File Structure
 - `add.sh` - Add new links
-- `fetchmeta.go` - Fetch metadata
+- `fetchmeta.go` - Fetch metadata (with YouTube support)
 - `render.gohtml.sh` - Generate HTML
 - `generate-sitemap.sh` - Generate sitemap.xml
 - `backup-links.sh` - Backup links data
@@ -95,6 +110,7 @@ ls -la *.backup*
 - `tests/run-tests.sh` - Test runner script
 - `sync/update.sh` - Pull remote updates (with data protection)
 - `sync/setup-cron.sh` - Setup automatic updates
+- `sync/install-ytdlp.sh` - Install yt-dlp for YouTube thumbnails
 - `links.json` - Data storage (git ignored)
 - `src/index.html` - Generated site
 - `src/sitemap.xml` - Generated sitemap
