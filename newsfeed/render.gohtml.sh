@@ -3,6 +3,19 @@ set -e
 
 cd "$(dirname "$0")"
 
+# Check if jq is installed
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq is not installed"
+    echo ""
+    echo "Install jq on your system:"
+    echo "  Amazon Linux/RHEL/CentOS: sudo yum install jq"
+    echo "  Ubuntu/Debian: sudo apt-get install jq"
+    echo "  macOS: brew install jq"
+    echo ""
+    echo "Or download from: https://stedolan.github.io/jq/download/"
+    exit 1
+fi
+
 # Read about.md content
 ABOUT_NAME=""
 ABOUT_LINK=""
@@ -26,6 +39,7 @@ cat > ../src/index.html <<EOF
   <meta name="description" content="A curated collection of interesting links and resources">
   <meta name="author" content="$ABOUT_NAME">
   <meta name="robots" content="index, follow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'none';">
   <title>Links - $ABOUT_NAME</title>
   
   <!-- Open Graph / Facebook -->

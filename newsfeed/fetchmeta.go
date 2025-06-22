@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 	"regexp"
 	"strings"
@@ -14,6 +15,11 @@ import (
 type Meta struct {
 	Title     string `json:"title"`
 	Thumbnail string `json:"thumbnail"`
+}
+
+func isValidURL(urlStr string) bool {
+	_, err := url.Parse(urlStr)
+	return err == nil
 }
 
 func fetchOpenGraph(url string) (*Meta, error) {
@@ -44,6 +50,14 @@ func fetchOpenGraph(url string) (*Meta, error) {
 }
 
 func fetchYTDLP(url string) (*Meta, error) {
+	if !isValidURL(url) {
+		return nil, fmt.Errorf("invalid URL format")
+	}
+	
+	if !strings.Contains(url, "youtube.com") && !strings.Contains(url, "youtu.be") {
+		return nil, fmt.Errorf("URL is not a YouTube URL")
+	}
+	
 	cmd := exec.Command("yt-dlp", "--print", "%(title)s\n%(thumbnail)s", url)
 	out, err := cmd.Output()
 	if err != nil {
@@ -62,6 +76,12 @@ func main() {
 		os.Exit(1)
 	}
 	url := os.Args[1]
+	
+	if !isValidURL(url) {
+		fmt.Fprintln(os.Stderr, "Error: Invalid URL format")
+		os.Exit(1)
+	}
+	
 	meta, err := fetchOpenGraph(url)
 	if err != nil || meta.Title == "" {
 		if strings.Contains(url, "youtube.com") || strings.Contains(url, "youtu.be") {

@@ -5,6 +5,11 @@ A minimalist link curation tool with static HTML generation.
 ## Quick Start
 
 ```bash
+# Install dependencies (if needed)
+sudo yum install jq  # Amazon Linux/RHEL/CentOS
+# OR: sudo apt-get install jq  # Ubuntu/Debian
+# OR: brew install jq  # macOS
+
 # Add a link
 cd newsfeed
 ./add.sh http://example.com
@@ -20,7 +25,6 @@ docker compose up -d
 - Static HTML generation with about section
 - Docker-based serving
 - Automatic title/thumbnail fetching
-- YouTube support via yt-dlp
 - Smart URL handling (auto-prepends https://, validates URLs)
 - Automatic updates from remote repository
 
