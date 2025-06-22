@@ -23,7 +23,14 @@ if ! curl -s --max-time 10 --head "$URL" > /dev/null 2>&1; then
 fi
 
 echo "URL validated successfully!"
-read -p "enter description: " DESCRIPTION
+echo -n "Enter description: "
+IFS= read -r DESCRIPTION
+
+# Check if description was provided
+if [ -z "$DESCRIPTION" ]; then
+  echo "Error: Description is required"
+  exit 1
+fi
 
 # Call Go program to fetch metadata (title, thumbnail, og data)
 # Use absolute path to fetchmeta.go

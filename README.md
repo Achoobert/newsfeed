@@ -68,13 +68,39 @@ docker-compose up -d
 ./backup-links.sh [backup-name]
 ```
 
+**Note**: Descriptions can contain spaces and special characters. The script will properly handle multi-word descriptions.
+
 ## YouTube Thumbnails
 
 For YouTube videos, the tool automatically fetches thumbnails using `yt-dlp`:
 
 - **Installation**: Run `./sync/install-ytdlp.sh` on your server
 - **Automatic**: Thumbnails are fetched when adding YouTube links
-- **Fallback**: If `yt-dlp` is not available, links work without thumbnails
+- **Fallback**: If `yt-dlp` is blocked by YouTube's bot detection, the tool uses alternative methods
+- **Fix Existing**: Use `./fix-youtube-entries.sh` to fix existing YouTube entries with empty metadata
+
+### YouTube Bot Detection Issues
+
+If you see errors like "Sign in to confirm you're not a bot", the tool will:
+
+1. **Try yt-dlp with different options** (user-agent, no-cert-check)
+2. **Fall back to direct thumbnail URLs** (usually works even when yt-dlp fails)
+3. **Extract video ID** and generate thumbnail URLs manually
+
+### Fix Existing YouTube Entries
+
+If you have YouTube entries with empty titles/thumbnails:
+
+```bash
+cd newsfeed
+./fix-youtube-entries.sh
+```
+
+This will:
+- Find all YouTube entries with missing metadata
+- Fetch new metadata using the enhanced methods
+- Update `links.json` with the new data
+- Regenerate the HTML site
 
 ## Testing
 ```bash

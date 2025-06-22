@@ -123,11 +123,18 @@ func fetchYTDLP(url string) (*Meta, error) {
 		return nil, fmt.Errorf("yt-dlp not installed")
 	}
 	
-	cmd := exec.Command("yt-dlp", "--print", "%(title)s\n%(thumbnail)s\n%(description)s", url)
+	// Try with different yt-dlp options to bypass bot detection
+	cmd := exec.Command("yt-dlp", "--no-check-certificates", "--print", "%(title)s\n%(thumbnail)s\n%(description)s", url)
 	out, err := cmd.Output()
 	if err != nil {
-		return nil, err
+		// If that fails, try with user-agent
+		cmd = exec.Command("yt-dlp", "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36", "--print", "%(title)s\n%(thumbnail)s\n%(description)s", url)
+		out, err = cmd.Output()
+		if err != nil {
+			return nil, err
+		}
 	}
+	
 	lines := strings.SplitN(string(out), "\n", 4)
 	if len(lines) < 3 {
 		return nil, fmt.Errorf("yt-dlp output incomplete")
@@ -143,6 +150,44 @@ func fetchYTDLP(url string) (*Meta, error) {
 		Title:       lines[0],
 		Thumbnail:   lines[1],
 		Description: description,
+		SiteName:    "YouTube",
+		URL:         url,
+	}, nil
+}
+
+func fetchYouTubeFallback(url string) (*Meta, error) {
+	// Extract video ID from YouTube URL
+	videoID := ""
+	if strings.Contains(url, "youtube.com/watch?v=") {
+		parts := strings.Split(url, "v=")
+		if len(parts) > 1 {
+			videoID = strings.Split(parts[1], "&")[0]
+		}
+	} else if strings.Contains(url, "youtu.be/") {
+		parts := strings.Split(url, "youtu.be/")
+		if len(parts) > 1 {
+			videoID = strings.Split(parts[1], "?")[0]
+		}
+	}
+	
+	if videoID == "" {
+		return nil, fmt.Errorf("could not extract video ID")
+	}
+	
+	// Generate thumbnail URL (this usually works even when yt-dlp fails)
+	thumbnailURL := fmt.Sprintf("https://i.ytimg.com/vi/%s/maxresdefault.jpg", videoID)
+	
+	// Try to fetch the thumbnail to see if it exists
+	resp, err := http.Head(thumbnailURL)
+	if err != nil || resp.StatusCode != 200 {
+		// Fallback to medium quality thumbnail
+		thumbnailURL = fmt.Sprintf("https://i.ytimg.com/vi/%s/hqdefault.jpg", videoID)
+	}
+	
+	return &Meta{
+		Title:       "", // We can't get title without yt-dlp
+		Thumbnail:   thumbnailURL,
+		Description: "",
 		SiteName:    "YouTube",
 		URL:         url,
 	}, nil
@@ -167,6 +212,7 @@ func main() {
 	
 	// Try YouTube fallback if OpenGraph didn't get rich metadata and URL is YouTube
 	if (meta.Thumbnail == "" || meta.Title == "" || meta.Description == "") && (strings.Contains(url, "youtube.com") || strings.Contains(url, "youtu.be")) {
+		// First try yt-dlp
 		if ytMeta, err := fetchYTDLP(url); err == nil {
 			if meta.Title == "" {
 				meta.Title = ytMeta.Title
@@ -181,8 +227,16 @@ func main() {
 				meta.SiteName = ytMeta.SiteName
 			}
 		} else {
-			// Log yt-dlp error but don't fail
+			// If yt-dlp fails, try fallback method
 			fmt.Fprintf(os.Stderr, "Warning: yt-dlp failed for %s: %v\n", url, err)
+			if fallbackMeta, err := fetchYouTubeFallback(url); err == nil {
+				if meta.Thumbnail == "" {
+					meta.Thumbnail = fallbackMeta.Thumbnail
+				}
+				if meta.SiteName == "" {
+					meta.SiteName = fallbackMeta.SiteName
+				}
+			}
 		}
 	}
 	
