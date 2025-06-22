@@ -207,5 +207,3 @@ jobs:
           echo "❌ Semantic main element missing"
           exit 1
         fi
-          exit 1
-        fi
