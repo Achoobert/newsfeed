@@ -107,6 +107,15 @@ else
   exit 1
 fi
 
+# Generate about page
+if [ -f "../template/about.html.template" ]; then
+  mkdir -p ../src/about
+  cat "../template/about.html.template" | \
+    sed "s/{{ABOUT_NAME}}/$ABOUT_NAME/g" > ../src/about/index.html
+else
+  echo "Warning: About template not found, skipping about page generation"
+fi
+
 # Clean up temp file
 rm -f /tmp/link_entries.tmp
 

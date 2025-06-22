@@ -80,6 +80,14 @@ jobs:
           exit 1
         fi
         
+        if [ -f "../src/about.html" ]; then
+          echo "✅ about.html generated successfully"
+          head -10 ../src/about.html
+        else
+          echo "❌ about.html not generated"
+          exit 1
+        fi
+        
         if [ -f "../src/sitemap.xml" ]; then
           echo "✅ sitemap.xml generated successfully"
           head -5 ../src/sitemap.xml
@@ -93,6 +101,14 @@ jobs:
           cat ../src/robots.txt
         else
           echo "❌ robots.txt not generated"
+          exit 1
+        fi
+        
+        if [ -f "../src/about/index.html" ]; then
+          echo "✅ about/index.html generated successfully"
+          head -10 ../src/about/index.html
+        else
+          echo "❌ about/index.html not generated"
           exit 1
         fi
         
@@ -147,12 +163,15 @@ jobs:
           "newsfeed/render.gohtml.sh"
           "newsfeed/generate-sitemap.sh"
           "newsfeed/backup-links.sh"
+          "newsfeed/fix-youtube-entries.sh"
           "newsfeed/tests/fetchmeta_test.go"
           "newsfeed/tests/run-tests.sh"
           "sync/update.sh"
           "sync/setup-cron.sh"
+          "sync/install-ytdlp.sh"
           "template/about.md"
           "template/index.html.template"
+          "template/about.html.template"
           "README.md"
         )
         

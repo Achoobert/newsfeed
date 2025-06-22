@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A curated resource hub for people who believe in the power of TTRPGs. Tools, insights, and inspiration to keep your game alive. Own your table, because the world needs more stories.">
+  <meta name="author" content="{{ABOUT_NAME}}">
+  <meta name="robots" content="index, follow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'none';">
+  <title>About - {{ABOUT_NAME}}</title>
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="About - {{ABOUT_NAME}}">
+  <meta property="og:description" content="A curated resource hub for people who believe in the power of TTRPGs. Tools, insights, and inspiration to keep your game alive.">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:title" content="About - {{ABOUT_NAME}}">
+  <meta property="twitter:description" content="A curated resource hub for people who believe in the power of TTRPGs. Tools, insights, and inspiration to keep your game alive.">
+  
+  <style>
+    /* Reset and base styles */
+    * {
+      box-sizing: border-box;
+    }
+    
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px; 
+      margin: 2em auto; 
+      line-height: 1.6;
+      color: #333;
+      background-color: #fff;
+      padding: 0 1em;
+    }
+    
+    /* Skip to main content link for screen readers */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 6px;
+      background: #000;
+      color: #fff;
+      padding: 8px;
+      text-decoration: none;
+      z-index: 1000;
+    }
+    
+    .skip-link:focus {
+      top: 6px;
+    }
+    
+    /* Navigation */
+    .nav {
+      margin-bottom: 2em;
+      padding-bottom: 1em;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .nav a {
+      text-decoration: none;
+      color: #1a0dab;
+      margin-right: 1em;
+      transition: color 0.2s ease;
+    }
+    
+    .nav a:hover {
+      text-decoration: underline;
+      color: #0d47a1;
+    }
+    
+    .nav a:focus {
+      outline: 2px solid #1a0dab;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    
+    /* Main content */
+    .content {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 2.5em;
+      color: #333;
+      margin-bottom: 0.5em;
+      line-height: 1.2;
+    }
+    
+    .subtitle {
+      font-size: 1.2em;
+      color: #666;
+      margin-bottom: 2em;
+      font-style: italic;
+    }
+    
+    .intro {
+      font-size: 1.1em;
+      margin-bottom: 2em;
+      padding: 1em;
+      background: #f8f9fa;
+      border-left: 4px solid #1a0dab;
+      border-radius: 4px;
+    }
+    
+    p {
+      margin-bottom: 1.5em;
+      line-height: 1.7;
+    }
+    
+    .highlight {
+      background: #fff3cd;
+      padding: 1em;
+      border-radius: 4px;
+      border-left: 4px solid #ffc107;
+      margin: 2em 0;
+    }
+    
+    .signature {
+      font-style: italic;
+      color: #666;
+      text-align: center;
+      margin-top: 3em;
+      padding-top: 2em;
+      border-top: 1px solid #eee;
+    }
+    
+    /* Links */
+    a { 
+      text-decoration: none; 
+      color: #1a0dab; 
+      transition: color 0.2s ease;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+      color: #0d47a1;
+    }
+    
+    a:focus {
+      outline: 2px solid #1a0dab;
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      body {
+        margin: 1em;
+        padding: 0;
+      }
+      
+      h1 {
+        font-size: 2em;
+      }
+      
+      .content {
+        max-width: none;
+      }
+    }
+    
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      body {
+        color: #000;
+        background-color: #fff;
+      }
+      
+      .intro {
+        background: #e0e0e0;
+        border-left: 4px solid #000;
+      }
+      
+      .highlight {
+        background: #ffffcc;
+        border-left: 4px solid #000;
+      }
+      
+      a {
+        color: #0000ee;
+      }
+      
+      a:focus {
+        outline: 3px solid #000;
+      }
+    }
+    
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    
+    /* Print styles */
+    @media print {
+      body {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+      
+      .nav {
+        display: none;
+      }
+      
+      a {
+        color: #000;
+        text-decoration: underline;
+      }
+      
+      a[href^="http"]:after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip to main content link for accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <a href="/">← Back to Links</a>
+  </nav>
+  
+  <main id="main-content" class="content" role="main">
+    <h1>About</h1>
+    
+    <div class="subtitle">
+      A personally curated resource hub for anyone who believes in the power of TTRPGs. </br>Tools, insights, and inspiration to keep your game alive. </br>Own your table, because the world needs more stories. </br>You deserve to create.
+    </div>
+    
+    <p>
+      This site is my way of shouting into the void
+    </p>
+
+    <div class="intro">
+      <strong>Running games is worth it. Keep going.</strong>
+    </div>
+    
+    <p>
+      Over time, I've learned that the difference between a game that fizzles and one that lasts isn't talent. It's showing up. It's stealing good ideas shamelessly. It's remembering that even when a session bombs, you're still doing something <em>radical</em>
+    </p>
+    
+    <p>
+      So here's my toolbox: YouTube videos that changed how I prep, blog posts that untangled my GM anxiety, maybe some half-baked thoughts of my own. Take what works. Toss the rest.
+    </p>
+    
+    <div class="highlight">
+      <p>
+        <strong>Running TTRPGs isn't just fun. It's healthy for your soul, and for society itself.</strong> I think of it like skipping the fast food aisle to cook a meal from scratch with ingredients you bought at the farmers' market. Processed entertainment leaves you passive and full of empty calories. But games? Games demand something real from you. They feed your creativity, your empathy, your ability to sit across from other people and build a story together. That's not just play. That's resistance.
+      </p>
+    </div>
+    
+    <p>
+      You don't have to be perfect. You just have to keep rolling dice.
+    </p>
+    
+    <div class="signature">
+      <p><strong>Let's play.</strong></p>
+    </div>
+  </main>
+</body>
+</html> 

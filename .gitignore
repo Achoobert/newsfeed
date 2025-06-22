@@ -39,6 +39,7 @@ links.json.backup
 src/index.html
 src/sitemap.xml
 src/robots.txt
+src/about/
 
 # Security and sensitive files
 *.key

@@ -26,6 +26,7 @@ docker compose up -d
 ## Features
 - CLI tool for adding links with metadata
 - Static HTML generation with about section
+- **Dedicated `/about` page** with full site description
 - Docker-based serving
 - Automatic title/thumbnail fetching
 - **YouTube thumbnail support via yt-dlp**
@@ -132,13 +133,16 @@ ls -la *.backup*
 - `render.gohtml.sh` - Generate HTML
 - `generate-sitemap.sh` - Generate sitemap.xml
 - `backup-links.sh` - Backup links data
+- `fix-youtube-entries.sh` - Fix YouTube entries with missing metadata
 - `tests/fetchmeta_test.go` - Go test suite
 - `tests/run-tests.sh` - Test runner script
 - `sync/update.sh` - Pull remote updates (with data protection)
 - `sync/setup-cron.sh` - Setup automatic updates
 - `sync/install-ytdlp.sh` - Install yt-dlp for YouTube thumbnails
 - `links.json` - Data storage (git ignored)
-- `src/index.html` - Generated site
+- `src/index.html` - Generated main page
+- `src/about/index.html` - Generated about page
 - `src/sitemap.xml` - Generated sitemap
 - `template/about.md` - About content & remote URL
-- `template/index.html.template` - HTML template 
+- `template/index.html.template` - Main page HTML template
+- `template/about.html.template` - About page HTML template 

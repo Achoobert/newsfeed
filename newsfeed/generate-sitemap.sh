@@ -30,6 +30,12 @@ cat > ../src/sitemap.xml <<EOF
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>$SITE_URL/about</loc>
+    <lastmod>$CURRENT_DATE</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 EOF
 
 # Add individual link pages if they exist

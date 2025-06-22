@@ -255,9 +255,10 @@
     <h2 id="about-heading">About</h2>
     <p><strong>Name:</strong> {{ABOUT_NAME}}</p>
     <p><strong>Profile:</strong> <a href="{{ABOUT_LINK}}" target="_blank" rel="noopener noreferrer">StartPlaying.games</a></p>
-    <blockquote class="quote" cite="{{ABOUT_LINK}}">
-      "{{ABOUT_QUOTE}}"
-    </blockquote>
+    <div class="quote" cite="{{ABOUT_LINK}}">
+      {{ABOUT_QUOTE}}
+    </div>
+    <p><a href="/about">about →</a></p>
   </aside>
   
   <main id="main-content" class="content" role="main">
