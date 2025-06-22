@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A curated collection of interesting links and resources">
-  <meta name="author" content="Isaac "Achoobert"">
+  <meta name="author" content="{{ABOUT_NAME}}">
   <meta name="robots" content="index, follow">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'none';">
-  <title>Links - Isaac "Achoobert"</title>
+  <title>Links - {{ABOUT_NAME}}</title>
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Links - Isaac "Achoobert"">
+  <meta property="og:title" content="Links - {{ABOUT_NAME}}">
   <meta property="og:description" content="A curated collection of interesting links and resources">
   
   <!-- Twitter -->
   <meta property="twitter:card" content="summary">
-  <meta property="twitter:title" content="Links - Isaac "Achoobert"">
+  <meta property="twitter:title" content="Links - {{ABOUT_NAME}}">
   <meta property="twitter:description" content="A curated collection of interesting links and resources">
   
   <style>
@@ -231,10 +231,10 @@
   
   <aside class="about" role="complementary" aria-labelledby="about-heading">
     <h2 id="about-heading">About</h2>
-    <p><strong>Name:</strong> Isaac "Achoobert"</p>
-    <p><strong>Profile:</strong> <a href="https://startplaying.games/gm/achoobert" target="_blank" rel="noopener noreferrer">StartPlaying.games</a></p>
-    <blockquote class="quote" cite="https://startplaying.games/gm/achoobert">
-      "You never fail until you stop trying."
+    <p><strong>Name:</strong> {{ABOUT_NAME}}</p>
+    <p><strong>Profile:</strong> <a href="{{ABOUT_LINK}}" target="_blank" rel="noopener noreferrer">StartPlaying.games</a></p>
+    <blockquote class="quote" cite="{{ABOUT_LINK}}">
+      "{{ABOUT_QUOTE}}"
     </blockquote>
   </aside>
   
@@ -242,21 +242,7 @@
     <h1>Links</h1>
     
     <section aria-label="Link entries">
-      <article class="entry">
-        <h2><a href="https://example.com" target="_blank" rel="noopener noreferrer">Example Domain</a></h2>
-        <p class="desc">testing smart URL handling</p>
-        <time class="date" datetime="June 22T08:19 UTC">June 22, 2025 at 08:19 AM</time>
-      </article>
-      <article class="entry">
-        <h2><a href="https://httpbin.org/json" target="_blank" rel="noopener noreferrer"></a></h2>
-        <p class="desc">testing new timestamp format</p>
-        <time class="date" datetime="June 22T08:11 UTC">June 22, 2025 at 08:11 AM</time>
-      </article>
-      <article class="entry">
-        <h2><a href="https://example.com" target="_blank" rel="noopener noreferrer">Example Domain</a></h2>
-        <p class="desc">test description</p>
-        <time class="date" datetime="2025-06-22T00:47:06Z">2025-06-22T00:47:06Z</time>
-      </article>
+{{LINK_ENTRIES}}
     </section>
   </main>
 </body>

@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap (if you add one later)
-# Sitemap: https://yourdomain.com/sitemap.xml
+Sitemap: https://stillplaying.games.com/sitemap.xml
 
 # Crawl-delay for polite crawling
 Crawl-delay: 1 

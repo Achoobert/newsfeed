@@ -1,4 +1,4 @@
-- site : Stillplaying.games
+- site : https://stillplaying.games
 - name : Isaac "Achoobert"
 - link: https://startplaying.games/gm/achoobert
 - about: This page is a feed of information that has helped me as a professional GM. 

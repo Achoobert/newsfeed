@@ -27,11 +27,12 @@ docker compose up -d
 - Automatic title/thumbnail fetching
 - Smart URL handling (auto-prepends https://, validates URLs)
 - Automatic updates from remote repository
+- **Automatic sitemap generation**
 
 ## Setup
 ```bash
 # Make scripts executable
-chmod +x add.sh render.gohtml.sh
+chmod +x add.sh render.gohtml.sh generate-sitemap.sh
 chmod +x sync/update.sh sync/setup-cron.sh
 
 # Start server
@@ -49,14 +50,20 @@ docker compose up -d
 
 # Check for remote updates
 ./sync/update.sh
+
+# Generate sitemap manually (optional)
+./generate-sitemap.sh
 ```
 
 ## File Structure
 - `add.sh` - Add new links
 - `fetchmeta.go` - Fetch metadata
 - `render.gohtml.sh` - Generate HTML
+- `generate-sitemap.sh` - Generate sitemap.xml
 - `sync/update.sh` - Pull remote updates
 - `sync/setup-cron.sh` - Setup automatic updates
 - `links.json` - Data storage
 - `src/index.html` - Generated site
-- `template/about.md` - About content & remote URL 
+- `src/sitemap.xml` - Generated sitemap
+- `template/about.md` - About content & remote URL
+- `template/index.html.template` - HTML template 
