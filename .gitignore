@@ -43,3 +43,4 @@ links.json
 secrets/
 config.local.*
 *.log
+./src/*
