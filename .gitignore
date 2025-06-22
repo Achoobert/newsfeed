@@ -33,6 +33,7 @@ go.work.sum
 # .idea/
 # .vscode/
 links.json
+links.json.backup
 
 # Security and sensitive files
 *.key

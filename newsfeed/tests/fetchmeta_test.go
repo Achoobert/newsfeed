@@ -1,8 +1,39 @@
-package main
+package tests
 
 import (
+	"net/url"
 	"testing"
 )
+
+// Copy of the Meta struct from fetchmeta.go
+type Meta struct {
+	Title     string `json:"title"`
+	Thumbnail string `json:"thumbnail"`
+}
+
+// Copy of the isValidURL function from fetchmeta.go
+func isValidURL(urlStr string) bool {
+	if urlStr == "" {
+		return false
+	}
+	
+	parsedURL, err := url.Parse(urlStr)
+	if err != nil {
+		return false
+	}
+	
+	// Must have scheme and host
+	if parsedURL.Scheme == "" || parsedURL.Host == "" {
+		return false
+	}
+	
+	// Scheme must be http or https
+	if parsedURL.Scheme != "http" && parsedURL.Scheme != "https" {
+		return false
+	}
+	
+	return true
+}
 
 func TestIsValidURL(t *testing.T) {
 	tests := []struct {

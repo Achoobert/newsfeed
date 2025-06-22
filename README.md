@@ -28,6 +28,7 @@ docker compose up -d
 - Smart URL handling (auto-prepends https://, validates URLs)
 - Automatic updates from remote repository
 - **Automatic sitemap generation**
+- **Data backup protection during updates**
 
 ## Setup
 ```bash
@@ -55,6 +56,33 @@ docker-compose up -d
 
 # Generate sitemap manually (optional)
 ./generate-sitemap.sh
+
+# Backup your links data
+./backup-links.sh [backup-name]
+```
+
+## Testing
+```bash
+# Run all tests
+cd newsfeed/tests
+./run-tests.sh
+
+# Or run Go tests directly
+cd newsfeed/tests
+go test -v
+```
+
+## Data Protection
+
+The `links.json` file contains your curated links and is automatically protected during updates:
+
+- **Backup during updates**: The update script automatically backs up `links.json` before pulling remote changes
+- **Manual backup**: Use `./backup-links.sh [name]` to create timestamped backups
+- **Git ignored**: `links.json` is excluded from git tracking to prevent accidental overwrites
+
+If you ever lose data, check for backup files:
+```bash
+ls -la *.backup*
 ```
 
 ## File Structure
@@ -62,9 +90,12 @@ docker-compose up -d
 - `fetchmeta.go` - Fetch metadata
 - `render.gohtml.sh` - Generate HTML
 - `generate-sitemap.sh` - Generate sitemap.xml
-- `sync/update.sh` - Pull remote updates
+- `backup-links.sh` - Backup links data
+- `tests/fetchmeta_test.go` - Go test suite
+- `tests/run-tests.sh` - Test runner script
+- `sync/update.sh` - Pull remote updates (with data protection)
 - `sync/setup-cron.sh` - Setup automatic updates
-- `links.json` - Data storage
+- `links.json` - Data storage (git ignored)
 - `src/index.html` - Generated site
 - `src/sitemap.xml` - Generated sitemap
 - `template/about.md` - About content & remote URL

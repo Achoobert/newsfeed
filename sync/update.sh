@@ -37,7 +37,24 @@ REMOTE_COMMIT=$(git rev-parse origin/main)
 
 if [ "$LOCAL_COMMIT" != "$REMOTE_COMMIT" ]; then
   echo "Updates found! Pulling latest changes..."
+  
+  # Backup links.json if it exists
+  if [ -f "newsfeed/links.json" ]; then
+    echo "Backing up links.json..."
+    cp newsfeed/links.json newsfeed/links.json.backup
+  fi
+  
+  # Stash any local changes to prevent conflicts
+  git stash push -m "Auto-stash before pull" 2>/dev/null || true
+  
+  # Pull latest changes
   git pull origin main
+  
+  # Restore links.json if it was backed up
+  if [ -f "newsfeed/links.json.backup" ]; then
+    echo "Restoring links.json..."
+    mv newsfeed/links.json.backup newsfeed/links.json
+  fi
   
   # Regenerate HTML after update
   cd newsfeed
